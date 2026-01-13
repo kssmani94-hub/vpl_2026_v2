@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .pay-wrapper {
+        max-width: 600px;
+        margin: 30px auto;
+        padding: 0 15px;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .pay-card {
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        overflow: hidden;
+        animation: slideUp 0.6s ease-out;
+    }
+
+    /* SUCCESS STATE STYLING */
+    .success-header {
+        background: #27ae60;
+        color: white;
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    .id-box {
+        background: #f8f9fa;
+        border: 2px dashed #00a6fb;
+        padding: 20px;
+        border-radius: 15px;
+        margin: 25px 0;
+        text-align: center;
+    }
+
+    /* FORM STATE STYLING */
+    .pay-header-small {
+        background: #003554;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .amount-display {
+        text-align: center;
+        padding: 30px 20px;
+    }
+
+    .amount-display h1 {
+        font-size: 4rem;
+        margin: 0;
+        color: #27ae60;
+        font-weight: 900;
+    }
+
+    /* UPI APP GRID */
+    .app-grid {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .app-item {
+        flex: 1;
+        text-decoration: none;
+        color: inherit;
+        text-align: center;
+        border: 2px solid #f1f5f9;
+        padding: 10px;
+        border-radius: 15px;
+        transition: 0.3s;
+        background: #fafafa;
+    }
+
+    .app-item:hover {
+        border-color: #00a6fb;
+        background: #f0f9ff;
+    }
+
+    .app-item img {
+        width: 100%;
+        max-width: 60px;
+        border-radius: 10px;
+        margin-bottom: 8px;
+    }
+
+    /* MOBILE ADJUSTMENTS */
+    @media (max-width: 600px) {
+        .pay-wrapper { margin: 15px auto; }
+        .amount-display h1 { font-size: 3rem; }
+        .app-grid { flex-direction: column; } /* Stack apps on mobile */
+        .app-item { display: flex; align-items: center; gap: 20px; padding: 15px; text-align: left; }
+        .app-item img { margin-bottom: 0; max-width: 40px; }
+        .success-header { padding: 30px 15px; }
+        .id-box h1 { font-size: 2.2rem !important; }
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="pay-wrapper">
+
+    {% if success %}
+    <div class="pay-card">
+        <div class="success-header">
+            <div style="width: 70px; height: 70px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 2rem;">
+                <i class="fa fa-check"></i>
+            </div>
+            <h2 style="margin: 0; font-family: 'Oswald';">REGISTRATION RECEIVED!</h2>
+        </div>
+        
+        <div style="padding: 30px;">
+            <p style="color: #64748b; text-align: center;">Welcome to the league, <strong>{{ player.full_name }}</strong>. Your registration is now under review.</p>
+            
+            <div class="id-box">
+                <span style="font-size: 0.7rem; font-weight: 800; color: #003554; text-transform: uppercase;">Your Player ID</span>
+                <h1 style="margin: 5px 0 0; font-size: 3rem; color: #00a6fb; font-weight: 900; font-family: 'Oswald';">{{ player.vpl_id }}</h1>
+            </div>
+
+            <p style="color: #94a3b8; font-size: 0.8rem; text-align: center; margin-bottom: 25px;">
+                <i class="fa fa-info-circle"></i> Verification usually takes 12-24 hours.
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="{{ url_for('home') }}" style="background: #003554; color: white; padding: 15px; border-radius: 50px; text-decoration: none; font-weight: 800; text-align: center; text-transform: uppercase; font-size: 0.9rem;">Back to Home</a>
+                <button onclick="window.print()" style="background: none; color: #64748b; padding: 10px; border: none; font-weight: 700; cursor: pointer; font-size: 0.8rem;">Print Receipt</button>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="pay-card">
+        <div class="pay-header-small">VPL Season 2 Registration Fee</div>
+
+        <div class="amount-display">
+            <p style="margin: 0; color: #64748b; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Amount Payable</p>
+            
+            {% set amount = 550 if player.sleeves == 'Full' else 500 %}
+            <h1>₹{{ amount }}</h1>
+            <p style="color: #94a3b8; font-size: 0.8rem; margin-top: 10px; font-weight: 600;">Includes Kit & {{ player.sleeves }} Sleeves Jersey</p>
+        </div>
+
+        <div style="padding: 0 30px 40px;">
+            <form action="{{ url_for('payment', player_id=player.id) }}" method="POST" enctype="multipart/form-data">
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="font-weight: 800; font-size: 0.75rem; color: #003554; text-transform: uppercase; display: block; margin-bottom: 10px;">1. Select Method</label>
+                    <select name="payment_method" id="payment_method" required onchange="toggleUPISection()" style="width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #f1f5f9; font-size: 1rem; outline: none;">
+                        <option value="UPI">UPI Transfer (Pay via App)</option>
+                        <option value="Already Paid">Already Paid to Committee</option>
+                        <option value="Cash">Pay via Cash / Later</option>
+                    </select>
+                </div>
+
+                <div id="upi_section">
+                    <label style="font-weight: 800; font-size: 0.75rem; color: #003554; text-transform: uppercase; display: block; margin-bottom: 15px;">2. Tap to Open App</label>
+
+                    <div class="app-grid">
+                        {% for app, upi, img in [('Paytm', '9894982431@paytm', 'paytm.jpeg'), ('GPay', '9894982431@okaxis', 'gpay.jpeg'), ('PhonePe', '9894982431@ybl', 'phonepe.jpeg')] %}
+                        <a href="upi://pay?pa={{ upi }}&pn=VPL_Admin&am={{ amount }}&cu=INR" class="app-item">
+                            <img src="{{ url_for('static', filename='images/' + img) }}" alt="{{ app }}">
+                            <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">{{ app }}</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+
+                    <div style="background: #fff9e6; border: 1px solid #ffeeba; padding: 20px; border-radius: 15px; margin-bottom: 25px;">
+                        <label style="font-weight: 800; font-size: 0.75rem; color: #856404; text-transform: uppercase; display: block; margin-bottom: 10px;">3. Upload Screenshot *</label>
+                        <input type="file" name="screenshot" id="screenshot_input" accept="image/*" style="width: 100%; font-size: 0.8rem;">
+                    </div>
+                </div>
+
+                <button type="submit" style="width: 100%; background: #27ae60; color: white; border: none; padding: 20px; border-radius: 50px; font-weight: 800; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; box-shadow: 0 10px 20px rgba(39, 174, 96, 0.3);">
+                    Confirm Registration
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+    function toggleUPISection() {
+        const method = document.getElementById('payment_method').value;
+        const upiSection = document.getElementById('upi_section');
+        const screenshotInput = document.getElementById('screenshot_input');
+
+        if (method === 'UPI') {
+            upiSection.style.display = 'block';
+            screenshotInput.required = true;
+        } else {
+            upiSection.style.display = 'none';
+            screenshotInput.required = false;
+        }
+    }
+    window.onload = toggleUPISection;
+</script>
+{% endblock %}

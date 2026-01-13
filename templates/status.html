@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 500px; margin: 50px auto; padding: 20px;">
+    <div class="vpl-card" style="background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; text-align: center;">
+        
+        <div style="background: #003554; color: white; padding: 25px;">
+            <h2 style="font-family: 'Oswald'; margin: 0; letter-spacing: 1px;">CHECK REGISTRATION STATUS</h2>
+        </div>
+
+        <div style="padding: 30px;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem;">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #333;">Enter Registered Mobile Number</label>
+                <input type="tel" name="phone" placeholder="e.g. 9894982431" pattern="[0-9]{10}" required 
+                       style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 1.1rem; text-align: center; margin-bottom: 20px;">
+                
+                <button type="submit" style="width: 100%; background: #00a6fb; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase;">
+                    Check My Status
+                </button>
+            </form>
+
+            {% if player %}
+            <div style="margin-top: 40px; padding: 20px; border-top: 2px solid #eee; animation: fadeIn 0.5s;">
+                <p style="margin: 0; color: #666; font-size: 0.8rem; text-transform: uppercase; font-weight: 800;">Player Name</p>
+                <h3 style="margin: 5px 0 20px; color: #003554;">{{ player.full_name }}</h3>
+
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                    <p style="margin: 0; color: #666; font-size: 0.7rem; font-weight: 800;">VPL ID</p>
+                    <p style="margin: 0; font-size: 1.5rem; font-weight: 900; color: #00a6fb;">{{ player.vpl_id }}</p>
+                </div>
+
+                <p style="margin: 0; color: #666; font-size: 0.7rem; font-weight: 800; text-transform: uppercase;">Current Status</p>
+                <div style="margin-top: 10px; padding: 12px; border-radius: 50px; font-weight: bold; text-transform: uppercase; font-size: 0.9rem;
+                    {% if player.status == 'Approved' %} background: #d4edda; color: #155724; 
+                    {% elif player.status == 'Awaiting Approval' %} background: #fff3cd; color: #856404;
+                    {% else %} background: #f8d7da; color: #721c24; {% endif %}">
+                    {{ player.status }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ url_for('home') }}" style="text-decoration: none; color: #888; font-size: 0.9rem;">
+            <i class="fa fa-arrow-left"></i> Back to Homepage
+        </a>
+    </div>
+</div>
+
+
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}

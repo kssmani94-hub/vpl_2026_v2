@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    /* HERO SECTION */
+    .hero-container {
+        position: relative;
+        height: 75vh;
+        min-height: 500px;
+        background: linear-gradient(rgba(0, 53, 84, 0.85), rgba(0, 20, 31, 0.95)), 
+                    url("{{ url_for('static', filename='images/cricket-bg-new.png') }}");
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        margin-top: -35px; 
+        clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
+    }
+
+    .hero-content { color: white; max-width: 950px; padding: 20px; animation: fadeInUp 1s ease-out; }
+    .hero-content h1 { font-family: 'Oswald', sans-serif; font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1; text-transform: uppercase; margin: 0; letter-spacing: -1px; }
+    
+    .hero-tagline {
+        font-size: 1.2rem;
+        letter-spacing: 5px;
+        color: #00a6fb;
+        text-transform: uppercase;
+        font-weight: 800;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    /* DEADLINE ALERT BOX (Moved Above Group Photo) */
+    .deadline-box {
+        max-width: 1100px;
+        margin: -60px auto 40px; /* Overlaps Hero for higher visibility */
+        padding: 0 20px;
+        position: relative;
+        z-index: 40;
+    }
+    .deadline-card {
+        background: #fff5f5;
+        border: 2px solid #ff0000;
+        border-radius: 15px;
+        padding: 25px 35px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        box-shadow: 0 10px 30px rgba(255, 0, 0, 0.15);
+    }
+    .deadline-card i { font-size: 2.5rem; color: #ff0000; }
+    .deadline-info h3 { margin: 0; font-family: 'Oswald'; color: #c00; text-transform: uppercase; font-size: 1.6rem; }
+    .deadline-info p { margin: 5px 0 0; font-weight: 800; color: #333; }
+
+    /* GROUP PHOTO SECTION (Moved Below Deadline Box) */
+    .group-photo-section {
+        max-width: 1100px;
+        margin: 0 auto 60px; 
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        position: relative;
+        z-index: 30;
+        text-align: center;
+    }
+
+    .group-photo-section h2 {
+        font-family: 'Oswald', sans-serif;
+        color: #003554;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+    }
+
+    .group-photo-wrapper {
+        width: 100%;
+        border-radius: 15px;
+        overflow: hidden;
+        border: 4px solid #f8fafc;
+    }
+
+    .group-photo-wrapper img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: transform 0.5s;
+    }
+
+    .btn-main { 
+        padding: 18px 45px; 
+        border-radius: 50px; 
+        font-weight: 900; 
+        text-transform: uppercase; 
+        text-decoration: none; 
+        font-size: 1.1rem; 
+        transition: 0.3s; 
+        display: inline-block; 
+        border: none; 
+        cursor: pointer; 
+        background: #00a6fb; 
+        color: white; 
+        box-shadow: 0 8px 25px rgba(0, 166, 251, 0.4);
+    }
+
+    .btn-main:hover { background: #003554; transform: translateY(-3px); }
+
+    /* MOBILE ADJUSTMENTS */
+    @media (max-width: 768px) {
+        .deadline-box { margin: -30px 10px 30px; }
+        .deadline-card { flex-direction: column; text-align: center; padding: 20px; }
+        .group-photo-section { margin: 0 15px 40px; padding: 10px; }
+        .hero-container { height: 55vh; clip-path: none; }
+        .hero-content h1 { font-size: 2.5rem; }
+    }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<section class="hero-container">
+    <div class="hero-content">
+        <span class="hero-tagline">Season 2 | 2026</span>
+        <h1>VALLALAR<br><span style="color:#00a6fb;">PREMIER LEAGUE</span></h1>
+        <p style="font-size: 1.4rem; font-weight: bold; color: #fff; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px;">
+            2026 Official Player Registration
+        </p>
+        
+        <div style="margin-top: 35px;">
+            {% if remaining > 0 %}
+                <a href="{{ url_for('register') }}" class="btn-main">Register your slot</a>
+            {% else %}
+                <button class="btn-main" style="background: #444; color: #aaa; cursor: not-allowed;" disabled>Full House - Closed</button>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<div class="deadline-box">
+    <div class="deadline-card">
+        <i class="fa-solid fa-clock"></i>
+        <div class="deadline-info">
+            <h3>Deadline: 24th January 2026</h3>
+            <p id="countdown-text">Secure your spot in the VPL 2026 Auction Draft.</p>
+        </div>
+        <a href="{{ url_for('register') }}" style="background: #ff0000; color: white; padding: 15px 35px; border-radius: 50px; text-decoration: none; font-weight: 800; text-transform: uppercase; white-space: nowrap;">Join Now</a>
+    </div>
+</div>
+
+<div class="group-photo-section">
+    <h2>VPL 2025 Inaugural Ceremony</h2>
+    <div class="group-photo-wrapper">
+        <img src="{{ url_for('static', filename='images/group-photo.jpg') }}" alt="VPL Previous Year Group Photo">
+    </div>
+</div>
+
+<footer style="background: #001d2e; color: #fff; padding: 60px 20px; text-align: center; border-top: 5px solid #00a6fb;">
+    <h2 style="font-family:'Oswald'; font-size: 2.2rem; margin-bottom: 10px;">VALLALAR PREMIER LEAGUE</h2>
+    <p style="opacity: 0.6; max-width: 600px; margin: 0 auto 30px; font-size: 0.9rem;">
+        Season 2 Official Portal. All registration data is processed securely. <br>
+        Deadline: January 24, 2026.
+    </p>
+    <div style="font-size: 0.75rem; opacity: 0.3; letter-spacing: 1px;">&copy; 2026 VPL | VALLALAR PREMIER LEAGUE. ALL RIGHTS RESERVED.</div>
+</footer>
+
+<script>
+    const deadline = new Date("January 24, 2026 23:59:59").getTime();
+    const now = new Date().getTime();
+    const t = deadline - now;
+    const days = Math.floor(t / (1000 * 60 * 60 * 24));
+
+    if (days <= 15 && days >= 0) {
+        const textElement = document.getElementById("countdown-text");
+        textElement.innerHTML = `⚠️ URGENT: Only ${days} days remaining! Slots for 2026 are filling fast.`;
+        textElement.style.color = "#ff0000";
+    }
+</script>
+
+{% endblock %}

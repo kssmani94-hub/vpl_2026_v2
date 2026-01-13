@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 500px; margin: 50px auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden;">
+    <div style="background: #003554; color: white; padding: 25px; text-align: center; border-bottom: 5px solid #00a6fb;">
+        <h2 style="font-family: 'Oswald'; margin: 0; text-transform: uppercase;">Create New Credential</h2>
+    </div>
+
+    <form action="{{ url_for('create_user') }}" method="POST" style="padding: 30px;">
+        <div style="margin-bottom: 20px;">
+            <label style="display:block; font-weight:700; margin-bottom:8px; color:#475569;">NEW USERNAME</label>
+            <input type="text" name="new_username" required style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px;">
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label style="display:block; font-weight:700; margin-bottom:8px; color:#475569;">NEW PASSWORD</label>
+            <input type="password" name="new_password" required style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px;">
+        </div>
+        <div style="margin-bottom: 30px;">
+            <label style="display:block; font-weight:700; margin-bottom:8px; color:#475569;">ASSIGN ROLE</label>
+            <select name="role" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px;">
+                <option value="editor">Editor (Can only edit players)</option>
+                <option value="admin">Admin (Full Control)</option>
+            </select>
+        </div>
+        <button type="submit" style="width:100%; background:#00a6fb; color:white; border:none; padding:15px; border-radius:50px; font-weight:800; font-family:'Oswald'; cursor:pointer; text-transform:uppercase;">Create Account</button>
+    </form>
+</div>
+{% endblock %}

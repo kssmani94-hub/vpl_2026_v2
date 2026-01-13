@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .login-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 150px);
+        padding: 20px;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 400px;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .login-header {
+        background: #003554; /* Navy Blue */
+        color: white;
+        padding: 30px;
+        text-align: center;
+        border-bottom: 5px solid #00a6fb; /* VPL Light Blue */
+    }
+
+    .login-header h2 {
+        font-family: 'Oswald', sans-serif;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 1.8rem;
+    }
+
+    .login-form {
+        padding: 40px 30px;
+    }
+
+    .input-group {
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    .input-group label {
+        display: block;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 8px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+    }
+
+    .input-group i {
+        position: absolute;
+        left: 15px;
+        top: 38px;
+        color: #00a6fb;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 12px 15px 12px 40px;
+        border: 2px solid #f1f5f9;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        box-sizing: border-box;
+    }
+
+    .input-group input:focus {
+        border-color: #00a6fb;
+        background: #f8fbff;
+        outline: none;
+    }
+
+    .btn-login-submit {
+        width: 100%;
+        background: #00a6fb;
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 10px 20px rgba(0, 166, 251, 0.3);
+    }
+
+    .btn-login-submit:hover {
+        background: #003554;
+        transform: translateY(-2px);
+    }
+
+    /* Error Message Styling */
+    .login-error {
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-align: center;
+        border: 1px solid #fecaca;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-header">
+            <h2>Admin Login</h2>
+        </div>
+
+        <div class="login-form">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="login-error">
+                    <i class="fa fa-circle-exclamation"></i> {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('login') }}" method="POST">
+                <div class="input-group">
+                    <label>Username</label>
+                    <i class="fa fa-user"></i>
+                    <input type="text" name="username" placeholder="Enter Admin Username" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <i class="fa fa-lock"></i>
+                    <input type="password" name="password" placeholder="Enter Admin Password" required>
+                </div>
+
+                <button type="submit" class="btn-login-submit">
+                    Secure Login <i class="fa fa-shield-halved" style="margin-left: 8px;"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

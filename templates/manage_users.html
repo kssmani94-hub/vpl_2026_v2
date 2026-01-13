@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 900px; margin: 40px auto; padding: 20px; font-family: 'Segoe UI', sans-serif;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2 style="font-family: 'Oswald'; color: #003554; text-transform: uppercase; margin: 0; border-bottom: 3px solid #00a6fb; padding-bottom: 5px;">
+            Committee Management
+        </h2>
+        <a href="{{ url_for('create_user') }}" style="background: #22c55e; color: white; padding: 12px 25px; border-radius: 50px; text-decoration: none; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; box-shadow: 0 5px 15px rgba(34, 197, 94, 0.3);">
+            <i class="fa fa-user-plus"></i> Add New Member
+        </a>
+    </div>
+
+    <div style="background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="background: #003554; color: white;">
+                    <th style="padding: 20px;">Username</th>
+                    <th>Role</th>
+                    <th>Account Status</th>
+                    <th style="text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 20px; font-weight: 700; color: #334155;">
+                        <i class="fa fa-user-circle" style="margin-right: 10px; color: #00a6fb;"></i> {{ user.username }}
+                    </td>
+                    <td>
+                        <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: {% if user.role == 'admin' %}#7c3aed{% else %}#64748b{% endif %};">
+                            {{ user.role }}
+                        </span>
+                    </td>
+                    <td>
+                        <span style="padding: 4px 10px; background: #dcfce7; color: #15803d; border-radius: 50px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase;">
+                            Active
+                        </span>
+                    </td>
+                    <td style="text-align: center;">
+                        {% if user.username != 'admin' %}
+                            <form action="{{ url_for('delete_user', id=user.id) }}" method="POST" style="display: inline;">
+                                <button type="submit" onclick="return confirm('Remove access for {{ user.username }}?')" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.75rem;">
+                                    <i class="fa fa-trash-alt"></i> REMOVE
+                                </button>
+                            </form>
+                        {% else %}
+                            <span style="color: #cbd5e1; font-size: 0.75rem; font-style: italic;">Protected Account</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 20px; background: #f8fbff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; display: flex; align-items: flex-start; gap: 10px;">
+        <i class="fa fa-info-circle" style="color: #00a6fb; margin-top: 3px;"></i>
+        <p style="margin: 0; font-size: 0.85rem; color: #475569; line-height: 1.5;">
+            <strong>Note:</strong> Editors can view and approve players but cannot access this Team Management page or delete other users. All administrative actions are recorded in the system logs.
+        </p>
+    </div>
+</div>
+{% endblock %}
